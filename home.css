@@ -3,10 +3,11 @@ body{
     text-align: center;
     background: #2A7B9B;
     background: radial-gradient(circle, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
+    color: white;
 }
 
 #box-area{
-    background-color: rgb(240, 255, 255, 0.4);
+    background-color: rgba(228, 233, 233, 0.4);
     border-radius: 20px;
     height: 300px;
     margin-top: 50px;
@@ -20,7 +21,6 @@ body{
 h1{
     font-size: 50px;
     margin-bottom: 75px;
-    color: white;
 }
 
 #city{
@@ -36,10 +36,10 @@ h1{
 #weather-btn{
     font-size: 35px;
     cursor: pointer;
-    color: white;
     background-color: rgb(0, 162, 255);
     text-decoration: none;
     border-radius: 8px;
+    color: white;
     border: none;
     padding: 10px;
 }
@@ -50,6 +50,33 @@ h1{
 
 #weather-btn:active{
     background-color: rgb(0, 162, 215);
+}
+
+#cityName,
+#temp
+{
+    font-size: 35px;
+}
+
+#emoji{
+    font-size: 45px;
+    margin: 0px;
+}
+
+#extraTemp
+{
+    font-size: 22.5px;
+    word-spacing: 10px;
+}
+
+#recommendation,
+#rainRecommendation
+{
+    font-size: 22.5px;
+}
+
+.high-low{
+    font-weight: bold;
 }
 
 footer{

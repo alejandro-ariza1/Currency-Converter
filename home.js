@@ -6,13 +6,21 @@ const emoji = document.getElementById("emoji");
 const temp = document.getElementById("temp");
 const extratemp = document.getElementById("extraTemp");
 const recommendation = document.getElementById("recommendation");
+const rainRecommendation = document.getElementById("rainRecommendation");
 
 async function btnClicked(){
     let cityInputted = city.value;
     let cityCapitalised = cityInputted.charAt(0).toUpperCase() + cityInputted.slice(1);
     
     const data = await getWeather(cityCapitalised);
-    displayInfo(data, cityCapitalised);
+    const rain = await getForecast(cityCapitalised);
+    const rainChance = rain.list[0].pop * 100;
+    const text = await recommend(data, rainChance);
+
+    const rainText = rainRecommend(rainChance);
+    const emojiIcon = getEmoji(data);
+
+    displayInfo(data, cityCapitalised, text, rain, emojiIcon, rainText);
 }
 
 weatherBtn.addEventListener("click", btnClicked);
@@ -28,11 +36,84 @@ async function getWeather(cityCapitalised) {
     }
 }
 
-
-function displayInfo(data, cityCapitalised){
-    cityName.textContent = cityCapitalised;
-    //emoji.textContent =;
-    temp.textContent = `${data.main.temp}°C`;
-    extratemp.textContent = `H:${data.main.temp_max} L:${data.main.temp_min}`;
-    //recommendation.textContent = ;
+async function getForecast(cityCapitalised) {
+    try{
+        const response = await fetch ("https://api.openweathermap.org/data/2.5/forecast?q=" + cityCapitalised + "&units=metric&appid=d5c4b39691595893eaf261c857070d43");
+        const rain = await response.json();
+        return rain;
+    } catch (error){
+        console.error("Something went wrong:", error)
+    }
 }
+
+function recommend(data) {
+    let text;
+
+    if(data.main.temp<=9){
+        text = "It's very cold, wear a warm coat and consider wearing gloves, hat and scarf";
+    }
+    else if(data.main.temp<=14){
+        text = "It's cold, wear a warm coat";
+    }
+    else if(data.main.temp<=17){
+        text = "It's chilly, wear a light coat or jumper";
+    }
+    else if(data.main.temp<=23){
+        text = "It's hot, you can wear a t-shirt";
+    }
+    else if(data.main.temp>=24){
+        text = "It's very hot, stay hydrated";
+    }
+    return text;
+}
+
+function rainRecommend(rainChance) {
+    let rainText;
+
+    if (rainChance >=60){
+        rainText = "There's a chance it's raining, consider taking an umbrella ☔️";
+    }
+    return rainText;
+}
+
+function getEmoji(data, rainChance){
+    let emojiIcon;
+    if (rainChance >=60){
+        return "🌧️";
+    }
+    
+    if(data.main.temp<=9){
+    emojiIcon = "❄️"
+    }
+    else if(data.main.temp<=14){
+        emojiIcon = "💨"
+    }
+    else if(data.main.temp<=17){
+        emojiIcon = "☁️"
+    }
+    else if(data.main.temp<=23){
+        emojiIcon = "☀️"
+    }
+    else if(data.main.temp>=24){
+        emojiIcon = "🥵"
+    }
+    return emojiIcon;
+}
+
+function displayInfo(data, cityCapitalised, text, rain, emojiIcon, rainText){
+    const rainChance = rain.list[0].pop * 100;
+    cityName.textContent = cityCapitalised;
+    emoji.textContent = emojiIcon;
+    temp.textContent = `${Math.round(data.main.temp)}°C`;
+
+    extratemp.innerHTML = `
+    <span class="high-low">H:</span>${Math.round(data.main.temp_max)}°C
+    <span class="high-low">L:</span>${Math.round(data.main.temp_min)}°C
+    ${rainChance}% of rain
+    `;
+
+    recommendation.textContent = text;
+    rainRecommendation.textContent = rainText;
+    return rainChance;
+}
+//GIT.IGNORE AND DISPLAY ERROR MESSAGE THAT INPUT IS NOT VALID
